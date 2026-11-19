@@ -1,0 +1,73 @@
+services:
+  api:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment:
+      APP_PROFILE: supabase
+      ENVIRONMENT: production
+      SUPABASE_ENVIRONMENT: production
+      SUPABASE_APP_ORIGIN: https://${APP_DOMAIN:?Set APP_DOMAIN}
+      WHATSAPP_BRIDGE_URL: http://whatsapp:3001
+      FORWARDED_ALLOW_IPS: 172.30.237.2
+    networks: [edge, default]
+    restart: unless-stopped
+    expose: ["8001"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/api/v1/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  web:
+    image: caddy:2
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:?Set APP_DOMAIN}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ../frontend/build/web:/srv:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      edge:
+        ipv4_address: 172.30.237.2
+    restart: unless-stopped
+  whatsapp:
+    profiles: [whatsapp]
+    build:
+      context: ..
+      dockerfile: whatsapp/Dockerfile
+    environment:
+      WHATSAPP_BRIDGE_TOKEN: ${WHATSAPP_BRIDGE_TOKEN:-}
+      WHATSAPP_ALLOWED_NUMBERS: ${WHATSAPP_ALLOWED_NUMBERS:-}
+    expose: ["3001"]
+    volumes: ["whatsapp_state:/app/.state"]
+    shm_size: 512mb
+    restart: unless-stopped
+  worker:
+    profiles: [whatsapp]
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    environment:
+      APP_PROFILE: supabase
+      SUPABASE_ENVIRONMENT: production
+      SUPABASE_APP_ORIGIN: https://${APP_DOMAIN:?Set APP_DOMAIN}
+      WHATSAPP_BRIDGE_URL: http://whatsapp:3001
+    command: ["python", "-m", "app.modules.reminders.worker"]
+    depends_on: [api, whatsapp]
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:
+  whatsapp_state:
+networks:
+  edge:
+    ipam:
+      config:
+        - subnet: 172.30.237.0/24

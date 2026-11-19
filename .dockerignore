@@ -1,0 +1,14 @@
+**/.env
+**/.env.*
+**/.venv
+**/node_modules
+**/.state
+**/.wwebjs_auth
+**/.wwebjs_cache
+**/__pycache__
+.codegraph
+backups
+scratch
+.opencode
+design
+frontend/build

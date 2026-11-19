@@ -1,0 +1,18 @@
+{
+  "name": "kamartha-whatsapp-demo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env bridge.mjs",
+    "test": "node --test ledger.test.mjs"
+  },
+  "dependencies": {
+    "qrcode": "1.5.4",
+    "whatsapp-web.js": "1.34.8"
+  },
+  "overrides": {
+    "puppeteer": "25.18.1",
+    "glob": "14.0.2"
+  }
+}

@@ -1,0 +1,41 @@
+# Private configuration and local state
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties
+/backups/
+*.dump
+*.backup
+.state/
+.wwebjs_auth/
+.wwebjs_cache/
+/audit_local.json
+/audit_supabase.json
+/docs/testing/evidence/2026-11-05-auth-demo/02-registrasi-terisi-390.png
+
+# Dependencies, caches, and build outputs
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+node_modules/
+/frontend/android/build/
+*.apk
+*.aab
+*.log
+
+# Local tooling and design archives
+/scratch/
+/.codegraph/
+/.archify/
+/.opencode/
+/.vscode/
+/opencode.jsonc
+/design/backup-session-state/
+/design/kamartha-design.figcraft
+/design/kamartha-design-before-responsive.figcraft
+/docs/templates/KAMARTHA-template-data-lama.xlsx

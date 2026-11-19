@@ -1,0 +1,33 @@
+[project]
+name = "kamartha-backend"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi==0.162.0",
+  "uvicorn==0.54.0",
+  "SQLAlchemy==2.1.6",
+  "psycopg[binary]==3.3.6",
+  "alembic==1.20.1",
+  "pwdlib[argon2]==0.3.1",
+  "pydantic-settings==2.16.2",
+  "tzdata==2026.6",
+  "python-multipart==0.0.32",
+  "httpx==0.28.1",
+  "pillow==13.0.0",
+  "pypdf==6.21.4",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.2.0", "pytest-cov==7.1.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = ["integration: requires an isolated PostgreSQL database"]
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+
+[tool.coverage.report]
+show_missing = true
